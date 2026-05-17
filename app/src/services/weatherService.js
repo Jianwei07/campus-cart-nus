@@ -88,7 +88,8 @@ function normalizeWeather(data, highDemandLocation = '') {
 
 export async function fetchCampusWeather(highDemandLocation = '') {
   const cached = readCache()
-  if (cached) return { ...cached, ...getPickupCopy(cached.severity, cached.forecast, highDemandLocation) }
+  if (cached)
+    return { ...cached, ...getPickupCopy(cached.severity, cached.forecast, highDemandLocation) }
 
   const response = await fetch(WEATHER_ENDPOINT)
   if (!response.ok) throw new Error(`Weather HTTP ${response.status}`)
