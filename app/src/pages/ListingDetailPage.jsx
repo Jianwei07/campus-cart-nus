@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { graphqlRequest } from '../services/graphqlClient'
 import { ChevronRight, MapPin, CheckCircle, MessageCircle, Star, ArrowLeft } from 'lucide-react'
 import { useSession } from '../lib/auth'
-import PaymentModal from '../components/payment/PaymentModal'
+import { showDemoNotice } from '../config/demoMode'
 
 const GET_LISTING_BY_ID = `
   query GetListing($id: ID!) {
@@ -31,8 +31,6 @@ export default function ListingDetailPage() {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [showPayment, setShowPayment] = useState(false)
-  const [purchaseSuccess, setPurchaseSuccess] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -79,7 +77,7 @@ export default function ListingDetailPage() {
   }
 
   const imageUrl = product.imageUrl || 'https://placehold.co/800x600/e2e8f0/64748b?text=No+Image'
-  const isSold = product.status === 'sold' || purchaseSuccess
+  const isSold = product.status === 'sold'
   const isOwnListing = session?.user?.id && product.seller?.id === session.user.id
 
   return (
@@ -211,17 +209,23 @@ export default function ListingDetailPage() {
                 </div>
               ) : (
                 <button
-                  onClick={() => setShowPayment(true)}
+                  onClick={() => showDemoNotice('Payment checkout')}
                   className="w-full bg-nus-blue text-white font-black py-4 rounded-2xl text-sm shadow-lg shadow-nus-blue/20 hover:scale-[1.02] active:scale-95 transition-all"
                 >
-                  Buy Now — S$ {parseFloat(product.price).toFixed(2)}
+                  Preview Checkout — S$ {parseFloat(product.price).toFixed(2)}
                 </button>
               )}
               <div className="grid grid-cols-2 gap-3">
-                <button className="bg-nus-orange text-white font-black py-3.5 rounded-2xl text-sm shadow-lg shadow-nus-orange/10 hover:scale-[1.02] active:scale-95 transition-all">
+                <button
+                  onClick={() => showDemoNotice('Making offers')}
+                  className="bg-nus-orange text-white font-black py-3.5 rounded-2xl text-sm shadow-lg shadow-nus-orange/10 hover:scale-[1.02] active:scale-95 transition-all"
+                >
                   Make an Offer →
                 </button>
-                <button className="bg-white border-2 border-gray-100 text-gray-900 font-black py-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 hover:bg-gray-50 active:scale-95 transition-all">
+                <button
+                  onClick={() => showDemoNotice('Chat')}
+                  className="bg-white border-2 border-gray-100 text-gray-900 font-black py-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 hover:bg-gray-50 active:scale-95 transition-all"
+                >
                   <MessageCircle className="w-4 h-4" />
                   Chat
                 </button>
@@ -231,17 +235,6 @@ export default function ListingDetailPage() {
         </div>
       </div>
 
-      {showPayment && (
-        <PaymentModal
-          listing={product}
-          user={session?.user}
-          onClose={() => setShowPayment(false)}
-          onSuccess={() => {
-            setShowPayment(false)
-            setPurchaseSuccess(true)
-          }}
-        />
-      )}
     </div>
   )
 }

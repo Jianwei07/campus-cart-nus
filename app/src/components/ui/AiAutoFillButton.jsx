@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Sparkles, Loader2, AlertCircle, Check } from 'lucide-react'
+import { showDemoNotice } from '../../config/demoMode'
 
 /**
  * AI Auto-Fill button that sends the uploaded image to the backend
@@ -38,22 +39,22 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
     setSuccess(false)
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      const response = await fetch(`${baseUrl}/api/ai/analyze-image`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ imageUrl }),
-        signal: controller.signal,
+      await new Promise((resolve, reject) => {
+        const timeout = window.setTimeout(resolve, 500)
+        controller.signal.addEventListener('abort', () => {
+          window.clearTimeout(timeout)
+          reject(new DOMException('Aborted', 'AbortError'))
+        })
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to analyze image')
-      }
-
-      onSuggest(data.suggestions)
+      showDemoNotice('AI auto-fill')
+      onSuggest({
+        title: 'Demo Marketplace Item',
+        description: 'This suggestion is generated locally for the public portfolio demo.',
+        suggestedPrice: 24,
+        condition: 'Good',
+        category: 'Electronics',
+      })
       setSuccess(true)
       setTimeout(() => setSuccess(false), 4000)
     } catch (err) {

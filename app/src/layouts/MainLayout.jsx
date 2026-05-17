@@ -1,4 +1,4 @@
-import { useSession, signOut } from '../lib/auth'
+import { useSession } from '../lib/auth'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import {
@@ -7,9 +7,9 @@ import {
   Package,
   ShoppingBag,
   User,
-  LogOut,
   LayoutDashboard,
 } from 'lucide-react'
+import { showDemoNotice } from '../config/demoMode'
 
 export default function MainLayout({ children }) {
   const { data: session } = useSession()
@@ -30,15 +30,7 @@ export default function MainLayout({ children }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const handleLogout = async () => {
-    await signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          navigate('/')
-        },
-      },
-    })
-  }
+  const handleDemoOnly = (action) => showDemoNotice(action)
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -110,14 +102,9 @@ export default function MainLayout({ children }) {
               >
                 <User className="w-5 h-5" />
               </button>
-              <button
-                onClick={handleLogout}
-                className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-nus-blue focus:ring-offset-2 transition"
-                title="Sign out"
-                aria-label="Sign out"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
+              <span className="hidden sm:inline-flex items-center rounded-full bg-green-50 border border-green-100 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-green-700">
+                Demo Mode
+              </span>
             </nav>
           </div>
         ) : (
@@ -130,6 +117,13 @@ export default function MainLayout({ children }) {
       </header>
 
       <main className="w-full">{children}</main>
+      <button
+        type="button"
+        onClick={() => handleDemoOnly('Live account changes')}
+        className="fixed bottom-5 right-5 z-50 rounded-full bg-gray-900 px-4 py-2 text-[11px] font-black uppercase tracking-widest text-white shadow-xl shadow-black/20"
+      >
+        Read-only demo
+      </button>
     </div>
   )
 }

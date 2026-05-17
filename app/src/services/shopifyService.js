@@ -1,5 +1,6 @@
-// List of sources
-export const SOURCES = ['User-listed', 'IUIGA', 'Bookshop.sg', 'NUS Press']
+import { mockShopProducts } from '../data/mockData'
+
+export const SOURCES = ['User-listed', 'Portfolio Demo']
 export const CONDITIONS = ['New / Sealed', 'Like New', 'Good', 'Used']
 export const LOCATIONS = [
   'Kent Ridge Hall',
@@ -8,93 +9,6 @@ export const LOCATIONS = [
   'Raffles Hall',
 ]
 
-const ENDPOINTS = {
-  IUIGA: 'https://www.iuiga.com/products.json?limit=20',
-  'Bookshop.sg': 'https://bookshop.sg/products.json?limit=20',
-  'NUS Press': 'https://nuspress.nus.edu.sg/products.json?limit=20',
-}
-
-// Helper to assign mock attributes
-const assignMockAttributes = (product) => {
-  // Random condition
-  const randomCondition = CONDITIONS[Math.floor(Math.random() * CONDITIONS.length)]
-  // Random location
-  const randomLocation = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)]
-  // 70% chance to be verified
-  const isVerified = Math.random() > 0.3
-
-  return {
-    ...product,
-    condition: randomCondition,
-    location: randomLocation,
-    verified: isVerified,
-  }
-}
-
-// Normalize a shopify product
-const normalizeShopifyProduct = (item, sourceName) => {
-  const image = item.images && item.images.length > 0 ? item.images[0].src : ''
-  const priceStr = item.variants && item.variants.length > 0 ? item.variants[0].price : '0.00'
-
-  return {
-    id: `${sourceName}-${item.id}`,
-    title: item.title,
-    price: parseFloat(priceStr),
-    image: image,
-    source: sourceName,
-    externalUrl: item.handle ? `/${item.handle}` : '#',
-  }
-}
-
-const CACHE_KEY = 'campuscart_shopify_cache'
-const CACHE_EXPIRY = 5 * 60 * 1000 // 5 minutes in ms
-
-export const fetchProducts = async () => {
-  // ── 1. Check Cache ──
-  try {
-    const cached = sessionStorage.getItem(CACHE_KEY)
-    if (cached) {
-      const { data, timestamp } = JSON.parse(cached)
-      if (Date.now() - timestamp < CACHE_EXPIRY) {
-        console.log('Serving Shopify products from session cache...')
-        return data
-      }
-    }
-  } catch (err) {
-    console.warn('Cache read error:', err)
-  }
-
-  // ── 2. Fetch Fresh Data ──
-  console.log('Fetching fresh products from Shopify stores...')
-  const allProducts = []
-  const fetchPromises = Object.entries(ENDPOINTS).map(async ([sourceName, url]) => {
-    try {
-      const response = await fetch(url)
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-      const data = await response.json()
-      const normalized = data.products.map((p) => normalizeShopifyProduct(p, sourceName))
-      allProducts.push(...normalized)
-    } catch (error) {
-      console.error(`Failed to fetch from ${sourceName}:`, error)
-    }
-  })
-
-  await Promise.all(fetchPromises)
-
-  // ── 3. Post-Process & Cache ──
-  const processedProducts = allProducts.map(assignMockAttributes).sort(() => Math.random() - 0.5)
-
-  try {
-    sessionStorage.setItem(
-      CACHE_KEY,
-      JSON.stringify({
-        data: processedProducts,
-        timestamp: Date.now(),
-      }),
-    )
-  } catch (err) {
-    console.warn('Cache write error:', err)
-  }
-
-  return processedProducts
+export async function fetchProducts() {
+  return mockShopProducts
 }

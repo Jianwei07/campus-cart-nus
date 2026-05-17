@@ -1,7 +1,6 @@
 import { useState, useMemo, Suspense, useEffect } from 'react'
 import { Search, ChevronDown, Tag, MapPin, Clock, MessageCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useSession } from '../lib/auth'
 import Antigravity from '../components/Antigravity'
 import SpotlightCard from '../components/SpotlightCard'
 import AiSearchSuggestions from '../components/ui/AiSearchSuggestions'
@@ -9,6 +8,7 @@ import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
 import { graphqlRequest } from '../services/graphqlClient'
 import NUSMap from '../components/Marketplace/NUSMap'
+import { showDemoNotice } from '../config/demoMode'
 
 const GET_REQUESTS = `
   query GetRequests($userId: String) {
@@ -61,9 +61,6 @@ function formatPostedAgo(dateStr) {
 }
 
 export default function WantToBuyPage() {
-  const { data: session } = useSession()
-  const isLoggedIn = !!session?.user
-
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategories, setSelectedCategories] = useState([])
   const [selectedLocations, setSelectedLocations] = useState([])
@@ -505,7 +502,7 @@ export default function WantToBuyPage() {
           ) : filtered.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filtered.map((listing) => (
-                <WTBCard key={listing.id} listing={listing} isLoggedIn={isLoggedIn} />
+                <WTBCard key={listing.id} listing={listing} />
               ))}
             </div>
           ) : (
@@ -530,7 +527,7 @@ export default function WantToBuyPage() {
                   items={listings}
                   columns={2}
                   renderItem={(listing) => (
-                    <WTBCard key={listing.id} listing={listing} isLoggedIn={isLoggedIn} />
+                    <WTBCard key={listing.id} listing={listing} />
                   )}
                 />
               </div>
@@ -543,7 +540,7 @@ export default function WantToBuyPage() {
 }
 
 // ── WTB Card ──────────────────────────────────────────────────────────────────
-function WTBCard({ listing, isLoggedIn }) {
+function WTBCard({ listing }) {
   return (
     <SpotlightCard
       className="group bg-white rounded-[2rem] border border-gray-100 p-6 flex flex-col gap-4 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
@@ -615,7 +612,7 @@ function WTBCard({ listing, isLoggedIn }) {
           </p>
         </div>
         <button
-          onClick={() => !isLoggedIn && (window.location.href = '/login')}
+          onClick={() => showDemoNotice('Contacting requesters')}
           className="flex items-center gap-2 bg-nus-blue hover:bg-nus-blue-hover text-white text-xs font-black px-5 py-2.5 rounded-xl shadow-lg shadow-nus-blue/15 transition-all active:scale-95"
         >
           <MessageCircle className="w-3.5 h-3.5" />I Have This

@@ -4,6 +4,7 @@ import ImageUploader from '../components/ui/ImageUploader'
 import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
+import { showDemoNotice } from '../config/demoMode'
 
 const GET_LISTING = `
   query GetListing($id: ID!) {
@@ -16,15 +17,6 @@ const GET_LISTING = `
       location
       imageUrl
       category { name }
-    }
-  }
-`
-
-const UPDATE_LISTING = `
-  mutation UpdateListing($id: ID!, $input: UpdateListingInput!) {
-    updateListing(id: $id, input: $input) {
-      id
-      title
     }
   }
 `
@@ -88,28 +80,11 @@ export default function EditListingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    try {
-      await graphqlRequest(UPDATE_LISTING, {
-        id,
-        input: {
-          title: formData.title,
-          description: formData.description || null,
-          price: parseFloat(formData.price),
-          condition: formData.condition,
-          category: formData.category,
-          location: formData.location || null,
-          imageUrl: formData.imageUrl || null,
-        },
-      })
-
-      alert('Listing updated successfully!')
+    window.setTimeout(() => {
+      showDemoNotice(`Editing listing ${id}`)
       navigate('/my-listings')
-    } catch (error) {
-      console.error('Failed to update listing:', error)
-      alert(error.message || 'Error updating listing.')
-    } finally {
       setIsSubmitting(false)
-    }
+    }, 250)
   }
 
   if (loading) {
@@ -257,7 +232,7 @@ export default function EditListingPage() {
               disabled={isSubmitting || !formData.title || !formData.price}
               className="btn-primary px-8"
             >
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
+              {isSubmitting ? 'Previewing...' : 'Preview Changes'}
             </button>
           </div>
         </form>

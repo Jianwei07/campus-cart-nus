@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSession } from '../lib/auth'
 import { graphqlRequest } from '../services/graphqlClient'
 import { Pencil, Trash2, Package, ShoppingBag, LayoutDashboard, MapPin } from 'lucide-react'
+import { showDemoNotice } from '../config/demoMode'
 
 const GET_MY_ACTIVITY = `
   query GetMyActivity($userId: String!) {
@@ -24,22 +25,6 @@ const GET_MY_ACTIVITY = `
       condition
       location
       category { name }
-    }
-  }
-`
-
-const DELETE_LISTING = `
-  mutation DeleteListing($id: ID!) {
-    deleteListing(id: $id) {
-      id
-    }
-  }
-`
-
-const DELETE_REQUEST = `
-  mutation DeleteRequest($id: ID!) {
-    deleteRequest(id: $id) {
-      id
     }
   }
 `
@@ -74,25 +59,11 @@ export default function MyListingsPage() {
   }, [session?.user?.id, fetchActivity])
 
   const handleDeleteListing = async (id) => {
-    if (!confirm('Are you sure you want to remove this listing?')) return
-    try {
-      await graphqlRequest(DELETE_LISTING, { id })
-      setListings((prev) => prev.filter((l) => l.id !== id))
-    } catch (err) {
-      console.error('Failed to delete listing:', err)
-      alert(err.message || 'Error deleting listing.')
-    }
+    showDemoNotice(`Deleting listing ${id}`)
   }
 
   const handleDeleteRequest = async (id) => {
-    if (!confirm('Are you sure you want to remove this request?')) return
-    try {
-      await graphqlRequest(DELETE_REQUEST, { id })
-      setRequests((prev) => prev.filter((r) => r.id !== id))
-    } catch (err) {
-      console.error('Failed to delete request:', err)
-      alert(err.message || 'Error deleting request.')
-    }
+    showDemoNotice(`Deleting request ${id}`)
   }
 
   if (loading) {

@@ -6,21 +6,13 @@
   "scripts": {
     "dev:app": "vite --host",
     "dev:backend": "nodemon server/index.js",
-    "dev": "concurrently \"pnpm run dev:app\" \"pnpm run dev:backend\"",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,css,json}\"",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,css,json}\"",
-    "prepare": "cd .. && husky app/.husky",
-    "postinstall": "prisma generate",
-    "db:push": "prisma db push",
-    "db:seed": "node prisma/seed.js",
-    "db:setup": "prisma db push && node prisma/seed.js"
-  },
-  "prisma": {
-    "seed": "node prisma/seed.js"
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css,json}\""
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.0.31",
@@ -55,7 +47,6 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "express": "^5.2.1",
     "globals": "^16.5.0",
-    "husky": "^9.1.7",
     "nodemon": "^3.1.14",
     "prettier": "^3.5.3",
     "prisma": "^6.19.2",

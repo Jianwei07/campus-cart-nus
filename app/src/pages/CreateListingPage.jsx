@@ -4,18 +4,9 @@ import NusSpinner from '../components/ui/NusSpinner'
 import { useNavigate } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
 import AiAutoFillButton from '../components/ui/AiAutoFillButton'
-import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
-
-const CREATE_LISTING = `
-  mutation CreateListing($input: CreateListingInput!) {
-    createListing(input: $input) {
-      id
-      title
-    }
-  }
-`
+import { showDemoNotice } from '../config/demoMode'
 
 export default function CreateListingPage() {
   const navigate = useNavigate()
@@ -54,27 +45,11 @@ export default function CreateListingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    try {
-      await graphqlRequest(CREATE_LISTING, {
-        input: {
-          title: formData.title,
-          description: formData.description || null,
-          price: parseFloat(formData.price),
-          condition: formData.condition,
-          category: formData.category,
-          location: formData.location || null,
-          imageUrl: formData.imageUrl || null,
-        },
-      })
-
-      alert('Listing created successfully!')
+    window.setTimeout(() => {
+      showDemoNotice('Creating listings')
       navigate('/')
-    } catch (error) {
-      console.error('Failed to create listing:', error)
-      alert(error.message || 'Error creating listing.')
-    } finally {
       setIsSubmitting(false)
-    }
+    }, 250)
   }
 
   return (
@@ -265,7 +240,7 @@ export default function CreateListingPage() {
                 disabled={isSubmitting || !formData.imageUrl || !formData.title || !formData.price}
                 className="btn-primary px-8"
               >
-                {isSubmitting ? 'Creating...' : 'List Item'}
+                {isSubmitting ? 'Previewing...' : 'Preview Listing'}
               </button>
             </div>
           </fieldset>

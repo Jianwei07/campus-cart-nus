@@ -4,6 +4,7 @@ import { useSession } from '../lib/auth'
 import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATION_NAMES } from '../constants/locations'
 import ImageUploader from '../components/ui/ImageUploader'
+import { showDemoNotice } from '../config/demoMode'
 import {
   User,
   Mail,
@@ -20,22 +21,6 @@ import {
 const GET_PROFILE = `
   query Me {
     me {
-      id
-      name
-      email
-      image
-      bio
-      phone
-      location
-      createdAt
-      listingCount
-    }
-  }
-`
-
-const UPDATE_PROFILE = `
-  mutation UpdateProfile($input: UpdateProfileInput!) {
-    updateProfile(input: $input) {
       id
       name
       email
@@ -103,26 +88,22 @@ export default function ProfilePage() {
   const handleSave = async () => {
     setSaving(true)
     setSuccessMsg('')
-    try {
-      const data = await graphqlRequest(UPDATE_PROFILE, {
-        input: {
-          name: formData.name || null,
-          bio: formData.bio || null,
-          phone: formData.phone || null,
-          location: formData.location || null,
-          image: formData.image || null,
-        },
-      })
-      setProfile(data.updateProfile)
+    window.setTimeout(() => {
+      const updatedProfile = {
+        ...profile,
+        name: formData.name || profile.name,
+        bio: formData.bio || null,
+        phone: formData.phone || null,
+        location: formData.location || null,
+        image: formData.image || null,
+      }
+      setProfile(updatedProfile)
       setEditing(false)
-      setSuccessMsg('Profile updated successfully!')
+      showDemoNotice('Saving profile changes')
+      setSuccessMsg('Preview updated locally for demo mode.')
       setTimeout(() => setSuccessMsg(''), 3000)
-    } catch (err) {
-      console.error('Failed to update profile:', err)
-      alert(err.message || 'Error updating profile.')
-    } finally {
       setSaving(false)
-    }
+    }, 250)
   }
 
   const handleCancel = () => {
