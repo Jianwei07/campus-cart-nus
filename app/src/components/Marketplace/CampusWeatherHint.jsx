@@ -75,7 +75,9 @@ export default function CampusWeatherHint({ highDemandLocation = '' }) {
           </div>
 
           <p className="mt-2 text-sm font-black leading-snug text-gray-900">{weather.forecast}</p>
-          <p className="mt-1 text-xs font-semibold leading-relaxed text-gray-500">{weather.message}</p>
+          <p className="mt-1 text-xs font-semibold leading-relaxed text-gray-500">
+            {weather.message}
+          </p>
 
           <div className="mt-3 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">
             <MapPin className="h-3.5 w-3.5 text-nus-orange/70" />
