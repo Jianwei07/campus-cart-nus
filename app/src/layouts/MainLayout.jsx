@@ -1,14 +1,7 @@
 import { useSession } from '../lib/auth'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import {
-  Plus,
-  ChevronDown,
-  Package,
-  ShoppingBag,
-  User,
-  LayoutDashboard,
-} from 'lucide-react'
+import { Plus, ChevronDown, Package, ShoppingBag, User, LayoutDashboard } from 'lucide-react'
 import { showDemoNotice } from '../config/demoMode'
 
 export default function MainLayout({ children }) {

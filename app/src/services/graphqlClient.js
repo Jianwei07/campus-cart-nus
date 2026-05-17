@@ -57,12 +57,25 @@ export async function graphqlRequest(query, variables = {}) {
 
   if (op === 'Me') return clone({ me: mockProfile })
 
-  if (op === 'UpdateProfile') return clone({ updateProfile: { ...mockProfile, ...variables.input } })
-  if (op === 'CreateListing') return clone({ createListing: { id: 'demo-new-listing', title: variables.input?.title || 'Demo Listing' } })
-  if (op === 'UpdateListing') return clone({ updateListing: { id: variables.id, title: variables.input?.title || 'Demo Listing' } })
+  if (op === 'UpdateProfile')
+    return clone({ updateProfile: { ...mockProfile, ...variables.input } })
+  if (op === 'CreateListing')
+    return clone({
+      createListing: { id: 'demo-new-listing', title: variables.input?.title || 'Demo Listing' },
+    })
+  if (op === 'UpdateListing')
+    return clone({
+      updateListing: { id: variables.id, title: variables.input?.title || 'Demo Listing' },
+    })
   if (op === 'DeleteListing') return clone({ deleteListing: { id: variables.id } })
-  if (op === 'CreateRequest') return clone({ createRequest: { id: 'demo-new-request', title: variables.input?.title || 'Demo Request' } })
-  if (op === 'UpdateRequest') return clone({ updateRequest: { id: variables.id, title: variables.input?.title || 'Demo Request' } })
+  if (op === 'CreateRequest')
+    return clone({
+      createRequest: { id: 'demo-new-request', title: variables.input?.title || 'Demo Request' },
+    })
+  if (op === 'UpdateRequest')
+    return clone({
+      updateRequest: { id: variables.id, title: variables.input?.title || 'Demo Request' },
+    })
   if (op === 'DeleteRequest') return clone({ deleteRequest: { id: variables.id } })
   if (op === 'CreatePaymentIntent') {
     throw new Error('Payment is disabled in portfolio demo mode.')

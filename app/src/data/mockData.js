@@ -46,7 +46,8 @@ export const mockListings = [
   {
     id: 'listing-laptop-stand',
     title: 'Aluminium Laptop Stand',
-    description: 'Foldable laptop stand for lectures and desk setups. Lightly used and easy to carry.',
+    description:
+      'Foldable laptop stand for lectures and desk setups. Lightly used and easy to carry.',
     price: 18,
     condition: 'Like New',
     location: 'UTown Residence',
@@ -109,7 +110,8 @@ export const mockRequests = [
   {
     id: 'request-calculator',
     title: 'Looking for a scientific calculator',
-    description: 'Need an exam-approved calculator this week. Prefer clean display and working buttons.',
+    description:
+      'Need an exam-approved calculator this week. Prefer clean display and working buttons.',
     budget: 25,
     condition: 'Good',
     location: 'Science Faculty',

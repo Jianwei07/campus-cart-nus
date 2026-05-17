@@ -526,9 +526,7 @@ export default function WantToBuyPage() {
                   query={searchQuery}
                   items={listings}
                   columns={2}
-                  renderItem={(listing) => (
-                    <WTBCard key={listing.id} listing={listing} />
-                  )}
+                  renderItem={(listing) => <WTBCard key={listing.id} listing={listing} />}
                 />
               </div>
             </div>
