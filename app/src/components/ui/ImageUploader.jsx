@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { UploadCloud, Loader2, X } from 'lucide-react'
+import { showDemoNotice } from '../../config/demoMode'
 
 export default function ImageUploader({ onUploadComplete }) {
   const [isUploading, setIsUploading] = useState(false)
@@ -34,38 +35,17 @@ export default function ImageUploader({ onUploadComplete }) {
     setError('')
 
     // Upload immediately
-    await uploadFile(file)
+    await uploadFile(objectUrl)
   }
 
-  const uploadFile = async (file) => {
+  const uploadFile = async (objectUrl) => {
     setIsUploading(true)
-    const formData = new FormData()
-    formData.append('image', file)
-
-    try {
-      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      const uploadRes = await fetch(`${baseUrl}/api/upload`, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      })
-
-      const responseData = await uploadRes.json()
-
-      if (!uploadRes.ok) {
-        throw new Error(responseData.error || 'Upload failed')
-      }
-
-      onUploadComplete(responseData.url)
-    } catch (err) {
-      console.error('Upload Error:', err)
-      setError(err.message || 'Failed to upload image. Please try again.')
-      setPreviewUrl(null) // Clear preview on failure
-    } finally {
+    window.setTimeout(() => {
+      showDemoNotice('Image upload')
+      onUploadComplete(objectUrl)
       setIsUploading(false)
-      // Reset input value so same file can be selected again if needed
       if (fileInputRef.current) fileInputRef.current.value = ''
-    }
+    }, 250)
   }
 
   const reset = () => {
@@ -122,7 +102,7 @@ export default function ImageUploader({ onUploadComplete }) {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="bg-white/90 backdrop-blur px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
                 <Loader2 className="w-4 h-4 text-nus-blue animate-spin" />
-                <span className="text-sm font-medium text-gray-700">Uploading...</span>
+                <span className="text-sm font-medium text-gray-700">Previewing demo image...</span>
               </div>
             </div>
           )}

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
+import { showDemoNotice } from '../config/demoMode'
 
 const GET_REQUEST = `
   query GetRequest($id: ID!) {
@@ -16,15 +17,6 @@ const GET_REQUEST = `
       category {
         name
       }
-    }
-  }
-`
-
-const UPDATE_REQUEST = `
-  mutation UpdateRequest($id: ID!, $input: UpdateRequestInput!) {
-    updateRequest(id: $id, input: $input) {
-      id
-      title
     }
   }
 `
@@ -77,27 +69,11 @@ export default function EditRequestPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    try {
-      await graphqlRequest(UPDATE_REQUEST, {
-        id,
-        input: {
-          title: formData.title,
-          description: formData.description || null,
-          budget: parseFloat(formData.budget),
-          condition: formData.condition,
-          category: formData.category,
-          location: formData.location || null,
-        },
-      })
-
-      alert('Request updated successfully!')
+    window.setTimeout(() => {
+      showDemoNotice(`Editing request ${id}`)
       navigate('/my-listings')
-    } catch (error) {
-      console.error('Failed to update request:', error)
-      alert(error.message || 'Error updating request.')
-    } finally {
       setIsSubmitting(false)
-    }
+    }, 250)
   }
 
   if (loading) {
@@ -229,7 +205,7 @@ export default function EditRequestPage() {
               disabled={isSubmitting || !formData.title || !formData.budget}
               className="btn-primary px-8"
             >
-              {isSubmitting ? 'Updating...' : 'Save Changes'}
+              {isSubmitting ? 'Previewing...' : 'Preview Changes'}
             </button>
           </div>
         </form>

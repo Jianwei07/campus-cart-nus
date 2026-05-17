@@ -1,38 +1,72 @@
-/**
- * Lightweight GraphQL client using fetch().
- * Sends queries/mutations to the backend /graphql endpoint
- * with session cookies included for authentication.
- */
+import { mockListings, mockProfile, mockRequests } from '../data/mockData'
 
-const GRAPHQL_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/graphql'
+function clone(value) {
+  return JSON.parse(JSON.stringify(value))
+}
+
+function operationName(query) {
+  return query.match(/\b(query|mutation)\s+(\w+)/)?.[2] || ''
+}
 
 export async function graphqlRequest(query, variables = {}) {
-  const res = await fetch(GRAPHQL_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ query, variables }),
-  })
+  const op = operationName(query)
 
-  // Guard against non-JSON responses (e.g. 502 HTML error pages)
-  if (!res.ok) {
-    const text = await res.text()
-    throw new Error(`Server error ${res.status}: ${text.slice(0, 200)}`)
+  if (op === 'GetListings' || op === 'GetMyActivity') {
+    const listings = variables.sellerId
+      ? mockListings.filter((listing) => listing.sellerId === variables.sellerId)
+      : mockListings
+    const requests = variables.userId
+      ? mockRequests.filter((request) => request.userId === variables.userId)
+      : mockRequests
+
+    if (op === 'GetMyActivity') return clone({ listings, requests })
+    return clone({ listings })
   }
 
-  let json
-  try {
-    json = await res.json()
-  } catch {
-    throw new Error(`Invalid JSON response from server (status ${res.status})`)
+  if (op === 'GetListing') {
+    return clone({
+      listing: mockListings.find((listing) => listing.id === variables.id) || null,
+    })
   }
 
-  if (json.errors && json.errors.length > 0) {
-    const err = json.errors[0]
-    const error = new Error(err.message)
-    error.code = err.extensions?.code
-    throw error
+  if (op === 'GetRequests') {
+    const requests = variables.userId
+      ? mockRequests.filter((request) => request.userId === variables.userId)
+      : mockRequests
+    return clone({ requests })
   }
 
-  return json.data
+  if (op === 'GetRequest') {
+    return clone({
+      request: mockRequests.find((request) => request.id === variables.id) || null,
+    })
+  }
+
+  if (op === 'GetRequestLocationCounts') {
+    const counts = mockRequests.reduce((map, request) => {
+      if (request.location) map[request.location] = (map[request.location] || 0) + 1
+      return map
+    }, {})
+    return {
+      requestLocationCounts: Object.entries(counts).map(([location, requestCount]) => ({
+        location,
+        requestCount,
+      })),
+    }
+  }
+
+  if (op === 'Me') return clone({ me: mockProfile })
+
+  if (op === 'UpdateProfile') return clone({ updateProfile: { ...mockProfile, ...variables.input } })
+  if (op === 'CreateListing') return clone({ createListing: { id: 'demo-new-listing', title: variables.input?.title || 'Demo Listing' } })
+  if (op === 'UpdateListing') return clone({ updateListing: { id: variables.id, title: variables.input?.title || 'Demo Listing' } })
+  if (op === 'DeleteListing') return clone({ deleteListing: { id: variables.id } })
+  if (op === 'CreateRequest') return clone({ createRequest: { id: 'demo-new-request', title: variables.input?.title || 'Demo Request' } })
+  if (op === 'UpdateRequest') return clone({ updateRequest: { id: variables.id, title: variables.input?.title || 'Demo Request' } })
+  if (op === 'DeleteRequest') return clone({ deleteRequest: { id: variables.id } })
+  if (op === 'CreatePaymentIntent') {
+    throw new Error('Payment is disabled in portfolio demo mode.')
+  }
+
+  throw new Error(`Unsupported demo GraphQL operation: ${op || 'unknown'}`)
 }

@@ -32,17 +32,11 @@ export default function AiRecommendedSection({
       setLoading(true)
       setError(false)
       try {
-        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-        const res = await fetch(`${baseUrl}/api/ai/suggest-search`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ query }),
-        })
-
-        if (!res.ok) throw new Error('Failed to fetch AI keywords')
-        const data = await res.json()
-        setSuggestionKeywords(data.suggestions || [])
+        const words = query
+          .toLowerCase()
+          .split(/\s+/)
+          .filter((word) => word.length > 2)
+        setSuggestionKeywords([...new Set([...words, 'electronics', 'books', 'desk'])].slice(0, 3))
       } catch (err) {
         console.error(err)
         setError(true)

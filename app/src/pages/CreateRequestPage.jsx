@@ -2,20 +2,11 @@ import { useRef, useState } from 'react'
 import { Check } from 'lucide-react'
 import NusSpinner from '../components/ui/NusSpinner'
 import { useNavigate } from 'react-router-dom'
-import { graphqlRequest } from '../services/graphqlClient'
 import ImageUploader from '../components/ui/ImageUploader'
 import AiAutoFillButton from '../components/ui/AiAutoFillButton'
 import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
-
-const CREATE_REQUEST = `
-  mutation CreateRequest($input: CreateRequestInput!) {
-    createRequest(input: $input) {
-      id
-      title
-    }
-  }
-`
+import { showDemoNotice } from '../config/demoMode'
 
 export default function CreateRequestPage() {
   const navigate = useNavigate()
@@ -46,26 +37,11 @@ export default function CreateRequestPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    try {
-      await graphqlRequest(CREATE_REQUEST, {
-        input: {
-          title: formData.title,
-          description: formData.description || null,
-          budget: parseFloat(formData.budget),
-          condition: formData.condition,
-          category: formData.category,
-          location: formData.location || null,
-        },
-      })
-
-      alert('Request created successfully!')
+    window.setTimeout(() => {
+      showDemoNotice('Posting requests')
       navigate('/want-to-buy')
-    } catch (error) {
-      console.error('Failed to create request:', error)
-      alert(error.message || 'Error creating request.')
-    } finally {
       setIsSubmitting(false)
-    }
+    }, 250)
   }
 
   return (
@@ -274,7 +250,7 @@ export default function CreateRequestPage() {
                 disabled={isSubmitting || !formData.title || !formData.budget}
                 className="btn-primary px-8"
               >
-                {isSubmitting ? 'Posting...' : 'Post Request'}
+                {isSubmitting ? 'Previewing...' : 'Preview Request'}
               </button>
             </div>
           </fieldset>
