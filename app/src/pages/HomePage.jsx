@@ -9,6 +9,7 @@ import Antigravity from '../components/Antigravity'
 import AiSearchSuggestions from '../components/ui/AiSearchSuggestions'
 import { Search } from 'lucide-react'
 import NUSMap from '../components/Marketplace/NUSMap'
+import CampusWeatherHint from '../components/Marketplace/CampusWeatherHint'
 
 const GET_LISTINGS = `
   query GetListings {
@@ -198,6 +199,7 @@ export default function HomePage() {
               onClearSelection={() => setFilters((prev) => ({ ...prev, locations: [] }))}
             />
           </div>
+          <CampusWeatherHint highDemandLocation={filters.locations[filters.locations.length - 1]} />
           <FilterSidebar filters={filters} setFilters={setFilters} />
         </div>
 

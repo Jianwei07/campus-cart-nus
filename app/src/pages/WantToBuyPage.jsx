@@ -9,6 +9,7 @@ import { CATEGORIES } from '../constants/categories'
 import { graphqlRequest } from '../services/graphqlClient'
 import NUSMap from '../components/Marketplace/NUSMap'
 import { showDemoNotice } from '../config/demoMode'
+import CampusWeatherHint from '../components/Marketplace/CampusWeatherHint'
 
 const GET_REQUESTS = `
   query GetRequests($userId: String) {
@@ -278,6 +279,7 @@ export default function WantToBuyPage() {
               locationCounts={locationCounts}
             />
           </div>
+          <CampusWeatherHint highDemandLocation={highDemandLocations[0]} />
 
           <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm sticky top-24 space-y-8">
             <h3 className="font-black text-gray-900 flex items-center justify-between">
