@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  bio           String?
+  phone         String?
+  location      String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+  listings      Listing[]
+  requests      Request[]
+  orders        Order[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  listings Listing[]
+  requests Request[]
+}
+
+model Listing {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  price       Float
+  condition   String?  // e.g. "New", "Like New", "Used"
+  location    String?  // e.g. "Kent Ridge Hall", "UTown Residence"
+  imageUrl    String?
+  seller      User     @relation(fields: [sellerId], references: [id])
+  sellerId    String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  status      String   @default("active") // active, sold, removed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+}
+
+model Order {
+  id              String   @id @default(uuid())
+  listing         Listing  @relation(fields: [listingId], references: [id])
+  listingId       String
+  buyer           User     @relation(fields: [buyerId], references: [id])
+  buyerId         String
+  paymentIntentId String   @unique
+  amount          Float
+  currency        String   @default("sgd")
+  status          String   @default("pending") // pending | succeeded | failed
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Request {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  budget      Float
+  condition   String?
+  location    String?
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  status      String   @default("active") // active, fulfilled, removed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

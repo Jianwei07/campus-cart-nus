@@ -1,0 +1,130 @@
+/* src/index.css */
+
+@import 'tailwindcss';
+
+@theme {
+  --color-nus-blue: #003d7c;
+  --color-nus-blue-hover: #002b5e;
+  --color-nus-orange: #ef7c00;
+  --color-nus-orange-hover: #cc6a00;
+}
+
+@layer base {
+  button:not(:disabled),
+  a {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* ── NUS Spinner ── */
+@keyframes nus-verb-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nus-verb {
+  animation: nus-verb-in 0.35s ease-out forwards;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@layer components {
+  /* ── Form Fields ── */
+  .input-field {
+    @apply w-full border-gray-300 rounded-lg shadow-sm focus:border-nus-blue focus:ring-nus-blue py-2 px-3 border outline-none font-medium;
+  }
+
+  .select-field {
+    @apply w-full border-gray-300 rounded-lg shadow-sm focus:border-nus-blue focus:ring-nus-blue py-2 px-3 border outline-none bg-white font-medium;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-nus-blue text-white px-5 py-2.5 text-sm hover:bg-nus-blue-hover;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-nus-orange text-white px-5 py-2.5 text-sm hover:bg-nus-orange-hover;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 text-gray-700 bg-transparent px-5 py-2.5 text-sm hover:bg-gray-50;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-red-600 bg-red-50 px-3 py-2 text-sm hover:bg-red-100;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-nus-blue bg-nus-blue/10 px-3 py-2 text-sm hover:bg-nus-blue/20;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  /* ── Layout & Sections ── */
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-header {
+    @apply mb-8 space-y-2;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden;
+  }
+
+  .card-premium {
+    @apply bg-white rounded-[2.5rem] shadow-xl shadow-black/5 border border-gray-100 transition-all duration-300;
+  }
+
+  /* ── Typography ── */
+  .heading-hero {
+    @apply text-4xl md:text-6xl font-black text-gray-900 tracking-tight leading-tight;
+  }
+
+  .heading-section {
+    @apply text-2xl md:text-3xl font-black text-gray-900 tracking-tight;
+  }
+
+  .heading-caps {
+    @apply text-[10px] font-black text-gray-400 uppercase tracking-widest;
+  }
+
+  .badge-accent {
+    @apply text-xs font-bold px-2.5 py-1 rounded-lg text-nus-orange bg-nus-orange/10 uppercase tracking-wider;
+  }
+
+  .badge-blue {
+    @apply text-xs font-bold px-2.5 py-1 rounded-lg text-nus-blue bg-nus-blue/10 uppercase tracking-wider;
+  }
+
+  .badge-gray {
+    @apply text-xs font-bold px-2.5 py-1 rounded-lg text-gray-400 bg-gray-100 uppercase tracking-wider;
+  }
+}
